@@ -1,5 +1,5 @@
 import { createContext, useState } from "react";
-import { getYearsOld } from "../helpers";
+import { getYearsOld, incrementByBrand, incrementByPlan, fixByCurrency } from "../helpers";
 
 const QuoteContext = createContext();
 
@@ -11,6 +11,10 @@ const QuoteProvider = ({ children }) => {
   });
 
   const [error, setError] = useState('')
+
+  const [result,setResult] = useState(0)
+
+  const [loading, setLoading] = useState(false)
 
   const handleChangeData = (e) => {
     setData({ 
@@ -24,20 +28,31 @@ const QuoteProvider = ({ children }) => {
   }
 
   const quoteInsurance = () => {
-    console.log('cotizando')
+
     // Una base
-    let base = 2000
+    let result = 2000
 
     // Obtener diferencia de años
     const yearsOld = getYearsOld(data.year)
 
     // Hay que restar el 3%
-    base = base * (100-yearsOld*3)/100
-    console.log(base)
+    result = result * (100-yearsOld*3)/100
 
     //American 15%, European 30%, Asian 5%
+    result *= incrementByBrand(data.brand)
 
     // Basic 20%, P¨remium 50%
+
+    result *= incrementByPlan(data.plan)
+
+    result = fixByCurrency(result) 
+
+    setLoading(true)
+    
+    setTimeout(() => {
+      setLoading(false)
+      setResult(result)
+    }, 1000);
   }
 
   return (
@@ -47,7 +62,9 @@ const QuoteProvider = ({ children }) => {
         handleChangeData,
         error,
         handleChangeError,
-        quoteInsurance
+        quoteInsurance,
+        result,
+        loading
       }}
     >
       {children}

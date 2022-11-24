@@ -1,10 +1,14 @@
 import React from 'react'
 import Form from './Form'
 import useQuote from '../hooks/useQuote'
+import Spinner from './Spinner'
+import Result from './Result'
 
 
 
 const InsuranceApp = () => {
+
+  const {loading} = useQuote()
 
   return (
     <>
@@ -15,6 +19,7 @@ const InsuranceApp = () => {
     </header>
     <main className='bg-white md:w-2/3 lg:w-1/2 mx-auto shadow rounded-lg p-10'>
       <Form/>
+      {loading ? <Spinner/> : <Result/>}
     </main>
     </>
   )
